@@ -1,18 +1,25 @@
 <template>
   <v-card :to="`/pokemon/${pokemon.id}`" class="h-100" hover>
-  <v-card-title>#{{ pokemon.id }} - {{ pokemon.name }}</v-card-title>
-  <v-chip
-      v-for="typeObj in pokemon.pokemon_v2_pokemontypes"
-      :key="typeObj.pokemon_v2_type.name"
-      :color="typesColor(typeObj.pokemon_v2_type.name).bg"
-      size="small"
-      class="mr-2"
-  >
-    {{ typeObj.pokemon_v2_type.name }}
-  </v-chip>
+
+    <v-img
+        :src="pokemon.pokemon_v2_pokemonsprites[0].sprites.other['official-artwork'].front_default"
+        :alt="pokemon.name"
+        cover
+    />
+    <v-card-title>#{{ pokemon.id }} - {{ pokemon.name }}</v-card-title>
+    <v-card-text>
+      <v-chip
+          v-for="typeObj in pokemon.pokemon_v2_pokemontypes"
+          :key="typeObj.pokemon_v2_type.name"
+          :color="typesColor(typeObj.pokemon_v2_type.name).bg"
+          size="small"
+          class="mr-2"
+      >
+        {{ typeObj.pokemon_v2_type.name }}
+      </v-chip>
+    </v-card-text>
   </v-card>
 </template>
-
 
 <script setup>
 

@@ -22,8 +22,6 @@
         max-width="800"
         class="mx-auto"
     >
-
-
       <v-card-title class="text-h4">
         {{ pokemon.name }}
       </v-card-title>
