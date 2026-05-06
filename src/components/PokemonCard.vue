@@ -1,6 +1,16 @@
 <template>
   <v-card :to="`/pokemon/${pokemon.id}`" class="h-100" hover>
 
+    <v-card-actions>
+      <v-spacer />
+      <v-btn
+          :icon="pokemonStore.isFavorite(pokemon) ? 'mdi-heart' : 'mdi-heart-outline'"
+          :color="pokemonStore.isFavorite(pokemon) ? 'red' : ''"
+          variant="text"
+          @click.stop.prevent="handleToggleFavorite()"
+      />
+    </v-card-actions>
+
     <v-img
         :src="pokemon.pokemon_v2_pokemonsprites[0].sprites.other['official-artwork'].front_default"
         :alt="pokemon.name"
@@ -22,6 +32,8 @@
 </template>
 
 <script setup>
+
+import {usePokemonStore} from "@/stores/pokemonStore.js";
 
 function typesColor(status) {
   const TYPE_COLORS = {
@@ -47,10 +59,16 @@ function typesColor(status) {
   return TYPE_COLORS[status] || 'grey'
 }
 
-defineProps({
+const { pokemon } = defineProps({
   pokemon: {
     type: Object,
     required: true,
   },
 })
+
+const pokemonStore = usePokemonStore()
+
+function handleToggleFavorite() {
+  pokemonStore.toggleFavorite(pokemon)
+}
 </script>

@@ -7,6 +7,7 @@ export const usePokemonStore = defineStore('pokemon', {
     // données ici
     pokemons: [],
     pokemonTypes: [],
+    favorites: [],
     isLoading: false,
     error: null,
   }),
@@ -26,8 +27,80 @@ export const usePokemonStore = defineStore('pokemon', {
         return state.pokemons.find(p => p.id === pokemonId)
       }
     },
+
+    totalFavorites: state => {
+      return state.favorites.length
+    },
+
+    isFavorite: state => {
+      return pokemon => {
+        return state.favorites.includes(pokemon.id)
+      }
+    },
+
+    getFavorites: state => {
+      const favoritePokemons = state.favorites.map(favoriteId => {
+        return state.pokemons.find(pokemon => pokemon.id === favoriteId)
+      })
+      return favoritePokemons.filter(pokemon => pokemon !== undefined)
+    },
   },
   actions: {
+    loadFavorites() {
+      try {
+        const savedFavorites = localStorage.getItem('pokemon_favorites')
+        if (savedFavorites) {
+          this.favorites = JSON.parse(savedFavorites)
+          console.log('Favoris chargés :', this.favorites.length, 'éléments')
+        } else {
+          this.favorites = []
+        }
+      } catch (error) {
+        console.error('Erreur lors du chargement des favoris :', error)
+        this.favorites = []
+      }
+    },
+
+    saveFavorites() {
+      try {
+        localStorage.setItem('pokemon_favorites', JSON.stringify(this.favorites))
+      } catch (error) {
+        console.error('Erreur lors de la sauvegarde des favoris :', error)
+      }
+    },
+
+    toggleFavorite(pokemon) {
+      const favoriteIndex = this.favorites.findIndex(
+          favoriteId => favoriteId === pokemon.id,
+      )
+
+      if (favoriteIndex === -1) {
+        // Pas encore favori → on l'ajoute
+        this.favorites.push(pokemon.id)
+      } else {
+        // Déjà favori → on le retire
+        this.favorites.splice(favoriteIndex, 1)
+      }
+
+      // Sauvegarder après chaque changement
+      this.saveFavorites()
+    },
+
+    cleanupFavorites() {
+      const initialCount = this.favorites.length
+
+      this.favorites = this.favorites.filter(favoriteId => {
+        return this.pokemons.some(pokemon => pokemon.id === favoriteId)
+      })
+
+      const removedCount = initialCount - this.favorites.length
+      if (removedCount > 0) {
+        console.log('Nettoyage :', removedCount, 'favoris obsolètes supprimés')
+        this.saveFavorites()
+      }
+    },
+
+
     // Récupérer les pokémons
     async fetchPokemons() {
       try {
@@ -55,7 +128,7 @@ export const usePokemonStore = defineStore('pokemon', {
         `
         const { data } = await apiGraphQL.post('', { query })  // ← '' car baseURL pointe déjà sur l'endpoint GraphQL
         this.pokemons = data.data.pokemon_v2_pokemon     // ← axios wrappe dans data, GraphQL aussi → data.data.*
-
+        this.cleanupFavorites()
       } catch (err) {
         throw new Error(`Impossible de charger les Pokémon : ${err.message}`)
       }
@@ -72,13 +145,15 @@ export const usePokemonStore = defineStore('pokemon', {
       }
     },
 
+
     async init() {
       this.isLoading = true
       try {
         await Promise.all([
           this.fetchPokemons(),
-            this.fetchTypes(),
+          this.fetchTypes(),
         ])
+        this.loadFavorites()
       } catch (error) {
         this.error = 'Erreur lors du chargement des données'
         console.error(error)
