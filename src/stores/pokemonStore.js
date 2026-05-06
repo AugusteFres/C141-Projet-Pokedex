@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
+import api from "@/plugins/axiosAPI.js";
+import apiGraphQL from "@/plugins/axiosGraphQL.js";
 
 export const usePokemonStore = defineStore('pokemon', {
   state: () => ({
     // données ici
     pokemons: [],
+    pokemonTypes: [],
     isLoading: false,
     error: null,
   }),
@@ -34,7 +37,7 @@ export const usePokemonStore = defineStore('pokemon', {
               where: {
                 is_default: { _eq: true },
                 pokemon_v2_pokemonspecy: {
-                  pokemon_v2_generation: { name: { _eq: "generation-iii" } }
+                  pokemon_v2_generation: { name: { _eq: "generation-vii" } }
                 }
               }
               order_by: { id: asc }
@@ -50,19 +53,22 @@ export const usePokemonStore = defineStore('pokemon', {
             }
           }
         `
-        const response = await fetch('https://beta.pokeapi.co/graphql/v1beta', {
-          method: 'POST',                                    // ← toujours POST en GraphQL
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query })                    // ← la query dans le body
-        })
-
-        if (!response.ok) throw new Error(`Erreur HTTP ${response.status}`)
-
-        const { data } = await response.json()             // ← les résultats sont dans data.*
-        this.pokemons = data.pokemon_v2_pokemon
+        const { data } = await apiGraphQL.post('', { query })  // ← '' car baseURL pointe déjà sur l'endpoint GraphQL
+        this.pokemons = data.data.pokemon_v2_pokemon     // ← axios wrappe dans data, GraphQL aussi → data.data.*
 
       } catch (err) {
-        throw new Error (`Impossible de charger les Pokémon : ${err.message}`)
+        throw new Error(`Impossible de charger les Pokémon : ${err.message}`)
+      }
+    },
+
+
+    async fetchTypes () {
+      try {
+        const response = await api.get('/type')
+        this.pokemonTypes = response.data.results.map(type => type.name)
+      } catch (error) {
+        console.error('Erreur:', error.message)
+        this.pokemonTypes = []
       }
     },
 
@@ -71,6 +77,7 @@ export const usePokemonStore = defineStore('pokemon', {
       try {
         await Promise.all([
           this.fetchPokemons(),
+            this.fetchTypes(),
         ])
       } catch (error) {
         this.error = 'Erreur lors du chargement des données'
