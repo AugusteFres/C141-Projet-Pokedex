@@ -31,7 +31,7 @@ Les élèves doivent comprendre les 3 blocs avant de toucher au code :
 - `<script setup>` — le JavaScript (la logique)
 - `<style>` — le CSS (optionnel dans cette démo, Vuetify s'en charge)
 
-Ouvrir [`src/App.vue`](src/App.vue) et [`src/pages/index.vue`](src/pages/index.vue) pour montrer ces blocs en situation réelle.
+Ouvrir [`src/App.vue`](src/App.vue) et [`src/pages/index.vue`](src/pages/Pokemon) pour montrer ces blocs en situation réelle.
 
 ### Appels API avec `fetch()` et `async/await`
 
@@ -140,7 +140,7 @@ Dans [`index.html`](index.html), remplacer la balise `<link rel="icon">` existan
 
 On veut `data.results` — le tableau de personnages.
 
-### Ce que les élèves codent dans [`index.vue`](src/pages/index.vue)
+### Ce que les élèves codent dans [`index.vue`](src/pages/Pokemon)
 
 **1. Le fetch** — dans le bloc `try` existant du `onMounted` (remplacer le commentaire TODO) :
 
@@ -240,8 +240,6 @@ Les skeleton loaders disparaissent trop vite en local car l'API répond en quelq
 
 - Composants Vuetify : [vuetifyjs.com/components/all](https://vuetifyjs.com/en/components/all/)
 - SFC (Single File Component) : [devjs.ch/vue/anatomie](https://devjs.ch/vue/anatomie.html)
-
-### Ce que les élèves codent dans [`about.vue`](src/pages/about.vue)
 
 Page 100% statique — le `<script setup>` reste vide, on ne travaille que dans le `<template>`.
 
@@ -571,7 +569,7 @@ onMounted(async () => {
 
 ![Résultat étape 6 — Fiche détail de Rick Sanchez](docs/screenshots/character-detail.png)
 
-### 2. Rendre les cards cliquables dans [`index.vue`](src/pages/index.vue)
+### 2. Rendre les cards cliquables dans [`index.vue`](src/pages/Pokemon)
 
 Ajouter la prop `to` et `hover` sur chaque `<v-card>` :
 

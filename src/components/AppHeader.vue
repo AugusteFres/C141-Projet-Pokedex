@@ -15,8 +15,7 @@
 
 <script setup>
 const menuItems = [
-  { title: 'Accueil', path: '/', icon: 'mdi-pokeball' },
+  { title: 'Accueil', path: '/pokedex', icon: 'mdi-pokeball' },
   { title: 'Favoris', path: '/favoris', icon: 'mdi-heart' },
-  { title: 'À propos', path: '/a-propos', icon: 'mdi-information' },
 ]
 </script>

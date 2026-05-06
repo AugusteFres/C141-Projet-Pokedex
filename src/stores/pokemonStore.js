@@ -145,7 +145,6 @@ export const usePokemonStore = defineStore('pokemon', {
       }
     },
 
-
     async init() {
       this.isLoading = true
       try {

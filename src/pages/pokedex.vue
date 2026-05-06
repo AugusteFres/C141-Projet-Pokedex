@@ -1,8 +1,6 @@
 <template>
   <v-container>
-    <h1 class="text-h4 my-4">Pokémons</h1>
-
-
+    <h1 class="text-h4 my-4">Pokémons de la région</h1>
     <v-row class="mb-4">
       <v-col cols="4" sm="6" md="4">
         <v-text-field

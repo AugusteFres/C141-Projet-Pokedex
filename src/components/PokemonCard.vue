@@ -3,7 +3,7 @@
 
     <v-card-actions>
       <v-spacer />
-      <v-btn
+      <v-btn :class="{ 'favorite-active': pokemonStore.isFavorite(pokemon) }"
           :icon="pokemonStore.isFavorite(pokemon) ? 'mdi-heart' : 'mdi-heart-outline'"
           :color="pokemonStore.isFavorite(pokemon) ? 'red' : ''"
           variant="text"
@@ -28,12 +28,27 @@
         {{ typeObj.pokemon_v2_type.name }}
       </v-chip>
     </v-card-text>
+
+    <v-snackbar
+        v-model="showSnackbar"
+        :timeout="2000"
+        color="primary"
+    >
+      {{ snackbarMessage }}
+    </v-snackbar>
   </v-card>
 </template>
+
+<style scoped>
+.favorite-active {
+  animation: heartbeat 0.6s ease-in-out;
+}
+</style>
 
 <script setup>
 
 import {usePokemonStore} from "@/stores/pokemonStore.js";
+import {ref} from "vue";
 
 function typesColor(status) {
   const TYPE_COLORS = {
@@ -66,9 +81,21 @@ const { pokemon } = defineProps({
   },
 })
 
+const showSnackbar = ref(false)
+const snackbarMessage = ref('')
 const pokemonStore = usePokemonStore()
 
 function handleToggleFavorite() {
+  const wasFavorite = pokemonStore.isFavorite(pokemon)
   pokemonStore.toggleFavorite(pokemon)
+  snackbarMessage.value = wasFavorite ? 'Retiré des favoris' : 'Ajouté aux favoris'
+  showSnackbar.value = true
 }
 </script>
+
+
+<style scoped>
+.favorite-active {
+  animation: heartbeat 0.6s ease-in-out;
+}
+</style>
